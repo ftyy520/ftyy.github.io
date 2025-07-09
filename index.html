@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>【从指南开始の十堰一中生活】完整指南</title>
+  <!-- 引入样式文件 -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 1. 顶部导航栏（固定在顶部，含主要分类） -->
+  <nav class="top-nav">
+    <div class="logo">【从指南开始の十堰一中生活】</div>
+    <ul class="nav-links">
+      <li><a href="#intro">简介</a></li>
+      <li><a href="#steps">步骤指南</a></li>
+      <li><a href="#faq">常见问题</a></li>
+      <li><a href="#about">关于</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <!-- 2. 侧边索引（固定在左侧，列出所有小节） -->
+    <aside class="sidebar">
+      <h3>目录索引</h3>
+      <ul>
+        <!-- 每个链接对应主内容区的章节ID（用 #ID 跳转） -->
+        <li><a href="#intro-1">什么是本指南？</a></li>
+        <li><a href="#intro-2">适合人群</a></li>
+        <li><a href="#step-1">准备工作</a></li>
+        <li><a href="#step-2">核心步骤</a></li>
+        <li><a href="#step-3">注意事项</a></li>
+        <li><a href="#faq-1">无法访问怎么办？</a></li>
+        <li><a href="#faq-2">如何更新内容？</a></li>
+      </ul>
+    </aside>
+
+    <!-- 3. 主内容区（根据点击显示对应部分） -->
+    <main class="content">
+      <!-- 第一部分：简介 -->
+      <section id="intro">
+        <h2>一、指南简介</h2>
+        
+        <div id="intro-1" class="section-content">
+          <h3>1. 什么是本指南？</h3>
+          <p>这是一个关于【你的指南主题，如“GitHub Pages建站”】的详细指南，包含从基础到进阶的全部步骤，帮你快速上手。</p>
+          <img src="images/cover.jpg" alt="指南封面图" class="guide-img"> <!-- 替换为你的图片 -->
+        </div>
+
+        <div id="intro-2" class="section-content">
+          <h3>2. 适合人群</h3>
+          <p>适合零基础新手、需要搭建个人网站的学生、希望免费托管网站的开发者。</p>
+        </div>
+      </section>
+
+      <!-- 第二部分：步骤指南 -->
+      <section id="steps">
+        <h2>二、核心步骤</h2>
+        
+        <div id="step-1" class="section-content">
+          <h3>1. 准备工作</h3>
+          <p>需要提前准备：</p>
+          <ul>
+            <li>一个 GitHub 账号（已完成）</li>
+            <li>一个阿里云域名（如有）</li>
+            <li>需要展示的图片（保存在本地）</li>
+          </ul>
+          <img src="images/step1.png" alt="准备工作示意图" class="guide-img"> <!-- 替换为你的图片 -->
+        </div>
+
+        <div id="step-2" class="section-content">
+          <h3>2. 核心步骤</h3>
+          <p>参考前面的教程，完成仓库创建、文件上传、域名解析（如有）。</p>
+        </div>
+
+        <div id="step-3" class="section-content">
+          <h3>3. 注意事项</h3>
+          <p>上传图片时，文件名不要有中文或空格（建议用英文+数字，如 step1.png）。</p>
+        </div>
+      </section>
+
+      <!-- 第三部分：常见问题 -->
+      <section id="faq">
+        <h2>三、常见问题</h2>
+        
+        <div id="faq-1" class="section-content">
+          <h3>1. 无法访问网站怎么办？</h3>
+          <p>检查 GitHub 仓库是否为公开状态，域名解析是否正确（参考前面的 DNS 配置步骤）。</p>
+        </div>
+
+        <div id="faq-2" class="section-content">
+          <h3>2. 如何更新内容？</h3>
+          <p>在 GitHub 仓库中直接编辑 index.html，修改后提交，网站会自动更新。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 4. 底部 -->
+  <footer>
+    <p>© 2025 【你的指南名称】 | 最后更新：2025-07-09</p>
+  </footer>
+
+  <!-- 简单JS：点击导航后高亮当前项 -->
+  <script>
+    // 所有导航链接
+    const links = document.querySelectorAll('.sidebar a, .nav-links a');
+    // 所有内容区块
+    const sections = document.querySelectorAll('.section-content');
+
+    links.forEach(link => {
+      link.addEventListener('click', function() {
+        // 移除所有链接的高亮
+        links.forEach(l => l.classList.remove('active'));
+        // 给当前点击的链接添加高亮
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
