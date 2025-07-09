@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>从指南开始の十堰一中生活</title>
+  <style>
+    :root {
+      --primary: #2c5aa0;   /* 校徽主色调 */
+      --accent: #f5c32c;    /* 银杏黄 */
+      --light: #f8f9fa;
+      --dark: #1a365d;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+      min-height: 100vh;
+      padding: 60px 20px 80px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* 顶部导航 */
+    .global-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: var(--shadow);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .breadcrumb {
+      margin-left: 15px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    #sidebarToggle {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    /* 内容区域 */
+    .content-section {
+      position: absolute;
+      width: 100%;
+      padding: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: var(--transition);
+      pointer-events: none;
+    }
+    .content-section.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+    
+    /* 首页样式 */
+    #home {
+      text-align: center;
+      padding-top: 40px;
+    }
+    #home h1 {
+      font-size: 2.2rem;
+      color: var(--dark);
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    #home p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 40px;
+    }
+    
+    /* 按钮网格 */
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .nav-button {
+      background: white;
+      border: none;
+      border-radius: 12px;
+      padding: 20px 15px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 150px;
+      justify-content: center;
+    }
+    .nav-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    .nav-button img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 15px;
+      object-fit: contain;
+    }
+    .nav-button span {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--dark);
+    }
+    
+    /* 侧边目录 */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 280px;
+      height: 100vh;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      z-index: 1001;
+      transition: var(--transition);
+      padding: 70px 20px 20px;
+      overflow-y: auto;
+    }
+    #sidebar.active {
+      left: 0;
+    }
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .chapter-tree details {
+      margin-bottom: 10px;
+    }
+    .chapter-tree summary {
+      font-weight: 600;
+      padding: 10px;
+      cursor: pointer;
+      background: #f5f7fa;
+      border-radius: 8px;
+    }
+    .chapter-tree a {
+      display: block;
+      padding: 8px 15px;
+      text-decoration: none;
+      color: #333;
+      transition: var(--transition);
+      border-left: 3px solid transparent;
+    }
+    .chapter-tree a:hover {
+      color: var(--primary);
+      border-left: 3px solid var(--accent);
+      background: #f0f9ff;
+    }
+    
+    /* 内容编辑区 */
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--accent);
+    }
+    .editable-area {
+      min-height: 400px;
+      padding: 20px;
+      border-radius: 10px;
+      background: white;
+      box-shadow: var(--shadow);
+      margin-top: 20px;
+      border: 1px dashed #d1e7ff;
+    }
+    .editable-area:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    /* 底部导航 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      padding: 10px;
+      display: flex;
+      justify-content: space-around;
+      z-index: 999;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 15px;
+      border-radius: 50px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .nav-item.active {
+      background: #f0f9ff;
+    }
+    .nav-item img {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 5px;
+    }
+    .nav-item span {
+      font-size: 0.8rem;
+      color: #555;
+    }
+    
+    /* 响应式优化 */
+    @media (max-width: 768px) {
+      .button-grid {
+        grid-template-columns: 1fr;
+      }
+      .content-section {
+        padding: 15px;
+      }
+      #home h1 {
+        font-size: 1.8rem;
+      }
+      .nav-button {
+        min-height: 120px;
+        padding: 15px 10px;
+      }
+    }
+    @media (max-width: 480px) {
+      .bottom-nav .nav-item span {
+        display: none;
+      }
+      .nav-item {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <header class="global-header">
+    <button id="sidebarToggle">☰</button>
+    <a href="#home" class="logo">十堰一中指南</a>
+    <div class="breadcrumb">
+      <span>当前位置：</span>
+      <a href="#home">首页</a> > <span id="current-chapter">总体介绍</span>
+    </div>
+  </header>
+  
+  <!-- 侧边目录 -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <h3>目录导航</h3>
+      <button id="closeSidebar">✕</button>
+    </div>
+    <div class="chapter-tree">
+      <details open>
+        <summary>校园生活指南</summary>
+        <a href="#" data-chapter="1">校园概况</a>
+        <a href="#" data-chapter="1">宿舍管理</a>
+        <a href="#" data-chapter="1">食堂攻略</a>
+      </details>
+      <details>
+        <summary>学习资源导航</summary>
+        <a href="#" data-chapter="2">图书馆指南</a>
+        <a href="#" data-chapter="2">实验室使用</a>
+        <a href="#" data-chapter="2">自习室分布</a>
+      </details>
+      <details>
+        <summary>校园文化</summary>
+        <a href="#" data-chapter="3">社团活动</a>
+        <a href="#" data-chapter="3">传统节日</a>
+        <a href="#" data-chapter="3">校史长廊</a>
+      </details>
+    </div>
+  </div>
+  
+  <!-- 首页内容 -->
+  <div id="home" class="content-section active">
+    <h1>从指南开始の十堰一中生活</h1>
+    <p>枫糖悠悠制作</p>
+    <div class="button-grid">
+      <button class="nav-button" onclick="showSection('overview')">
+        <img src="assets/icons/intro-icon.png" alt="总体介绍">
+        <span>总体介绍与概览</span>
+      </button>
+      <button class="nav-button" onclick="showSection('toc')">
+        <img src="assets/icons/toc-icon.png" alt="目录">
+        <span>目录</span>
+      </button>
+      <button class="nav-button" onclick="loadChapter(1)">
+        <img src="assets/icons/start-icon.png" alt="开始">
+        <span>从指南开始，了解一中吧！</span>
+      </button>
+      <button class="nav-button" onclick="showSection('credits')">
+        <img src="assets/icons/credits-icon.png" alt="鸣谢">
+        <span>制作与鸣谢</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- 总体介绍 -->
+  <div id="overview" class="content-section">
+    <div class="content-header">
+      <h2>总体介绍与概览</h2>
+      <button onclick="showSection('home')">返回首页</button>
+    </div>
+    <div class="editable-area" contenteditable="true">
+      <h3>十堰市第一中学简介</h3>
+      <p>十堰一中创建于1973年，是湖北省首批重点中学和省级示范高中。学校位于十堰市中心城区，占地253亩，建筑面积99851平方米，现有75个教学班，4600余名学生[3](@ref)。</p>
+      
+      <h3>办学特色</h3>
+      <p>秉承"育人为本，德育为先，师生共进，全面发展"的办学理念，着力打造"低进高出、高进优出、优进特出、多元发展"人才培养的品牌高地。封闭式管理，开放式教育，成为十堰一中的鲜明特色[1](@ref)。</p>
+      
+      <h3>校训</h3>
+      <p style="font-size: 1.2rem; color: var(--primary); font-weight: bold;">文明勤奋 · 求实进取</p>
+      
+      <h3>教学成果</h3>
+      <p>2022年高考升学率保持在90%以上，在十堰市高中学校中名列前茅[4](@ref)。仅2003年至2006年四年间，学校就培养出5个全市高考状元[2](@ref)。</p>
+    </div>
+  </div>
+  
+  <!-- 目录页 -->
+  <div id="toc" class="content-section">
+    <div class="content-header">
+      <h2>指南目录</h2>
+      <button onclick="showSection('home')">返回首页</button>
+    </div>
+    <div id="chapter-buttons" class="button-grid"></div>
+  </div>
+  
+  <!-- 章节内容 -->
+  <div id="chapter-container" class="content-section">
+    <div class="content-header">
+      <h2 id="chapter-title">第一章：校园生活指南</h2>
+      <button onclick="showSection('toc')">返回目录</button>
+    </div>
+    <div id="chapter-content" class="editable-area" contenteditable="true">
+      <!-- 内容通过JavaScript动态加载 -->
+    </div>
+  </div>
+  
+  <!-- 制作鸣谢 -->
+  <div id="credits" class="content-section">
+    <div class="content-header">
+      <h2>制作与鸣谢</h2>
+      <button onclick="showSection('home')">返回首页</button>
+    </div>
+    <div class="editable-area" contenteditable="true">
+      <h3>制作团队</h3>
+      <p>本指南由十堰一中学生社团"枫糖悠悠"独立开发制作，旨在帮助新生快速适应校园生活。</p>
+      
+      <h3>特别鸣谢</h3>
+      <ul>
+        <li>十堰一中校方提供的信息支持</li>
+        <li>石彬老师（英语特级教师）提供的校史资料[3](@ref)</li>
+        <li>孙福胜老师（地理高级教师）的校园地理指导[3](@ref)</li>
+      </ul>
+      
+      <h3>数据来源</h3>
+      <p>十堰一中官方网站：<a href="http://www.syyz.net" target="_blank">www.syyz.net</a></p>
+    </div>
+  </div>
+  
+  <!-- 底部导航 -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="showSection('home')">
+      <img src="assets/icons/home-icon.png" alt="首页">
+      <span>首页</span>
+    </div>
+    <div class="nav-item" onclick="showSection('overview')">
+      <img src="assets/icons/info-icon.png" alt="概览">
+      <span>概览</span>
+    </div>
+    <div class="nav-item" onclick="showSection('toc')">
+      <img src="assets/icons/book-icon.png" alt="目录">
+      <span>目录</span>
+    </div>
+    <div class="nav-item" onclick="showSection('credits')">
+      <img src="assets/icons/thanks-icon.png" alt="鸣谢">
+      <span>鸣谢</span>
+    </div>
+  </div>
+
+  <script>
+    // 章节数据（可扩展）
+    const chapters = [
+      {
+        id: 1,
+        title: "校园生活指南",
+        sections: [
+          {
+            title: "校园概况",
+            content: `<h3>校园布局</h3>
+            <p>十堰一中位于十堰市中心城区，分为五堰北街17号（人民路校门）和北京北路78号（北京路校门）两个校区。学校拥有四栋教学楼、六栋学生公寓、科技信息楼和室内体育馆[3](@ref)。</p>
+            <h3>设施配备</h3>
+            <ul>
+              <li>教室配备智慧黑板、空调和投影仪</li>
+              <li>宿舍配备空调、暖气及独立卫生间</li>
+              <li>图书馆藏书16万册，是全省地市州中第一家"普通中学达标图书馆"[3](@ref)</li>
+            </ul>`
+          },
+          {
+            title: "宿舍管理",
+            content: `<h3>住宿规定</h3>
+            <p>学校实行封闭式管理，宿舍每晚22:30熄灯。学生需遵守以下规定：</p>
+            <ol>
+              <li>保持宿舍整洁，每日轮值打扫</li>
+              <li>禁止使用大功率电器</li>
+              <li>外来人员需登记访问</li>
+            </ol>`
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "学习资源导航",
+        sections: [
+          {
+            title: "图书馆指南",
+            content: `<h3>开放时间</h3>
+            <p>周一至周五：8:00-21:00<br>周末：9:00-17:00</p>
+            <h3>借阅规则</h3>
+            <ul>
+              <li>学生证借书，每次最多5本</li>
+              <li>借期30天，可续借一次</li>
+              <li>逾期每天罚款0.2元</li>
+            </ul>`
+          }
+        ]
+      }
+    ];
+    
+    // DOM元素
+    const contentSections = document.querySelectorAll('.content-section');
+    const sidebar = document.getElementById('sidebar');
+    const chapterButtons = document.getElementById('chapter-buttons');
+    const chapterTitle = document.getElementById('chapter-title');
+    const chapterContent = document.getElementById('chapter-content');
+    const currentChapter = document.getElementById('current-chapter');
+    
+    // 初始化目录按钮
+    function initTocButtons() {
+      chapters.forEach(chapter => {
+        const button = document.createElement('button');
+        button.className = 'nav-button';
+        button.innerHTML = `
+          <img src="assets/icons/chapter-${chapter.id}.png" alt="${chapter.title}">
+          <span>${chapter.title}</span>
+        `;
+        button.onclick = () => loadChapter(chapter.id);
+        chapterButtons.appendChild(button);
+      });
+    }
+    
+    // 显示指定区域
+    function showSection(sectionId) {
+      // 更新面包屑导航
+      const sectionNames = {
+        'home': '首页',
+        'overview': '总体介绍',
+        'toc': '目录',
+        'chapter-container': '章节内容',
+        'credits': '制作鸣谢'
+      };
+      currentChapter.textContent = sectionNames[sectionId];
+      
+      // 更新活动状态
+      contentSections.forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+      sidebar.classList.remove('active');
+      
+      // 更新底部导航状态
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      if(sectionId === 'home') {
+        document.querySelector('.bottom-nav .nav-item:nth-child(1)').classList.add('active');
+      }
+    }
+    
+    // 加载章节内容
+    function loadChapter(chapterId) {
+      const chapter = chapters.find(c => c.id === chapterId);
+      if (!chapter) return;
+      
+      chapterTitle.textContent = chapter.title;
+      chapterContent.innerHTML = chapter.sections[0].content;
+      showSection('chapter-container');
+      
+      // 保存阅读进度
+      localStorage.setItem('lastChapter', chapterId);
+    }
+    
+    // 侧边栏交互
+    document.getElementById('sidebarToggle').onclick = () => {
+      sidebar.classList.add('active');
+    };
+    document.getElementById('closeSidebar').onclick = () => {
+      sidebar.classList.remove('active');
+    };
+    
+    // 目录树交互
+    document.querySelectorAll('.chapter-tree a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const chapterId = link.getAttribute('data-chapter');
+        loadChapter(parseInt(chapterId));
+      });
+    });
+    
+    // 页面加载时初始化
+    window.onload = () => {
+      initTocButtons();
+      
+      // 恢复上次阅读进度
+      const lastChapter = localStorage.getItem('lastChapter');
+      if (lastChapter) {
+        loadChapter(parseInt(lastChapter));
+      }
+      
+      // 侧边栏点击外部关闭
+      document.addEventListener('click', (e) => {
+        if (!sidebar.contains(e.target) && e.target.id !== 'sidebarToggle') {
+          sidebar.classList.remove('active');
+        }
+      });
+    };
+  </script>
+</body>
+</html>
