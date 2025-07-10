@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>十堰一中校园生活指南</title>
+  <style>
+    :root {
+      --primary: #2c5aa0;
+      --accent: #f5c32c;
+      --light: #f8f9fa;
+      --dark: #1a365d;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --border-radius: 18px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "PingFang SC", "Microsoft YaHei", "SF Pro Display", sans-serif;
+    }
+    
+    /* 新增背景图片控制 */
+    body {
+      background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), 
+                  var(--bg-image, url('assets/bg-default.jpg')) center/cover no-repeat fixed;
+      min-height: 100vh;
+      padding: 80px 20px 100px;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.5s ease;
+    }
+    
+    /* 背景控制面板 */
+    .bg-control {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .bg-preview {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      border: 2px solid white;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      background-size: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .bg-preview:hover {
+      transform: scale(1.1);
+    }
+    
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      transition: var(--transition);
+    }
+    
+    /* 顶部导航优化 */
+    .global-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: -0.5px;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo::before {
+      content: "🍁";
+      margin-right: 8px;
+      font-size: 1.2em;
+    }
+    
+    .breadcrumb {
+      margin-left: 20px;
+      font-size: 0.95rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+    }
+    
+    .breadcrumb span {
+      margin: 0 6px;
+      color: #bbb;
+    }
+    
+    #sidebarToggle {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      margin-right: 15px;
+      color: var(--primary);
+    }
+    
+    /* 全局搜索优化 */
+    .global-search {
+      margin-left: auto;
+      position: relative;
+      width: 260px;
+    }
+    
+    .global-search input {
+      padding: 12px 20px;
+      border-radius: 50px;
+      border: 1px solid rgba(44, 90, 160, 0.15);
+      background: rgba(240, 245, 255, 0.7);
+      font-size: 0.95rem;
+      transition: var(--transition);
+      width: 100%;
+      padding-right: 45px;
+    }
+    
+    .global-search input:focus {
+      outline: none;
+      border-color: rgba(44, 90, 160, 0.3);
+      box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+      background: white;
+    }
+    
+    .global-search button {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    
+    .suggestions-box {
+      position: absolute;
+      top: 55px;
+      left: 0;
+      width: 100%;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      z-index: 100;
+    }
+    
+    .suggestion-item {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+      cursor: pointer;
+      transition: var(--transition);
+      background: white;
+    }
+    
+    .suggestion-item:hover {
+      background: #f8fbff;
+    }
+    
+    .suggestion-item span {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+      color: var(--dark);
+    }
+    
+    .suggestion-item small {
+      font-size: 0.85rem;
+      color: #888;
+    }
+    
+    /* 内容区域优化 */
+    .content-section {
+      position: absolute;
+      width: 100%;
+      padding: 30px;
+      opacity: 0;
+      transform: translateY(25px);
+      transition: var(--transition);
+      pointer-events: none;
+    }
+    
+    .content-section.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+    
+    /* 首页样式优化 */
+    #home {
+      text-align: center;
+      padding-top: 40px;
+    }
+    
+    #home h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    #home p {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 50px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* 按钮网格优化 */
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      margin-top: 40px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .nav-button {
+      background: white;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 30px 20px;
+      transition: var(--transition);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 220px;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(44, 90, 160, 0.1);
+    }
+    
+    .nav-button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      opacity: 0.7;
+      transition: var(--transition);
+    }
+    
+    .nav-button:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+    
+    .nav-button:hover::before {
+      height: 8px;
+      opacity: 1;
+    }
+    
+    .nav-button img {
+      width: 70px;
+      height: 70px;
+      margin-bottom: 22px;
+      object-fit: contain;
+      filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.08));
+    }
+    
+    .nav-button span {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--dark);
+      position: relative;
+      z-index: 2;
+    }
+    
+    .nav-button .subtitle {
+      font-size: 0.95rem;
+      color: #777;
+      margin-top: 12px;
+      font-weight: 400;
+    }
+    
+    /* 侧边目录优化 */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: 300px;
+      height: 100vh;
+      background: var(--glass-bg);
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+      z-index: 1001;
+      transition: var(--transition);
+      padding: 85px 25px 25px;
+      overflow-y: auto;
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    #sidebar.active {
+      left: 0;
+    }
+    
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .sidebar-header h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    #closeSidebar {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #999;
+      transition: var(--transition);
+    }
+    
+    #closeSidebar:hover {
+      color: var(--primary);
+      transform: rotate(90deg);
+    }
+    
+    .chapter-tree details {
+      margin-bottom: 15px;
+    }
+    
+    .chapter-tree summary {
+      font-weight: 700;
+      padding: 16px 20px;
+      cursor: pointer;
+      background: rgba(240, 245, 255, 0.7);
+      border-radius: 12px;
+      transition: var(--transition);
+      color: var(--dark);
+      list-style: none;
+      position: relative;
+    }
+    
+    .chapter-tree summary::after {
+      content: "›";
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%) rotate(0deg);
+      transition: var(--transition);
+      font-size: 1.5rem;
+    }
+    
+    .chapter-tree details[open] summary::after {
+      transform: translateY(-50%) rotate(90deg);
+    }
+    
+    .chapter-tree summary:hover {
+      background: rgba(232, 240, 255, 0.9);
+    }
+    
+    .chapter-tree a {
+      display: block;
+      padding: 14px 25px;
+      text-decoration: none;
+      color: #555;
+      transition: var(--transition);
+      border-left: 3px solid transparent;
+      font-size: 0.98rem;
+      border-radius: 8px;
+      margin: 5px 0;
+    }
+    
+    .chapter-tree a:hover {
+      color: var(--primary);
+      border-left: 3px solid var(--accent);
+      background: rgba(245, 195, 44, 0.08);
+      transform: translateX(5px);
+    }
+    
+    /* 内容编辑区优化 */
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(245, 195, 44, 0.3);
+    }
+    
+    .content-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, var(--dark), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    
+    .content-header button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+    }
+    
+    .content-header button:hover {
+      background: var(--dark);
+      transform: translateX(-5px);
+    }
+    
+    .content-header button::before {
+      content: "←";
+      margin-right: 8px;
+    }
+    
+    .editable-area {
+      min-height: 500px;
+      padding: 35px;
+      border-radius: var(--border-radius);
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* 校园地图模块优化 */
+    #map-container {
+      height: 550px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      margin-top: 25px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(135deg, #e6f0ff, #f5f9ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    #map-container::before {
+      content: "校园地图加载中...";
+      color: #999;
+      font-size: 1.2rem;
+      position: absolute;
+    }
+    
+    .map-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    
+    .map-controls .search-box {
+      flex: 1;
+      min-width: 300px;
+      position: relative;
+    }
+    
+    .map-controls .search-box input {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 50px;
+      border: 1px solid rgba(44, 90, 160, 0.15);
+      background: rgba(240, 245, 255, 0.7);
+      font-size: 1rem;
+      padding-right: 50px;
+    }
+    
+    .map-controls .search-box button {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    
+    .map-layers {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .map-layers button {
+      padding: 12px 25px;
+      border-radius: 50px;
+      background: white;
+      color: var(--primary);
+      border: 1px solid rgba(44, 90, 160, 0.2);
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    
+    .map-layers button:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .location-card {
+      padding: 25px;
+      margin-top: 25px;
+      border-radius: var(--border-radius);
+    }
+    
+    .location-card h3 {
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+      color: var(--dark);
+    }
+    
+    .location-card p {
+      margin-bottom: 20px;
+      color: #666;
+    }
+    
+    .location-card button {
+      background: var(--accent);
+      color: #333;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    
+    .location-card button:hover {
+      background: #e0b027;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(245, 195, 44, 0.3);
+    }
+    
+    /* 评论区优化 */
+    .comment-section {
+      margin-top: 40px;
+      padding: 30px;
+      border-radius: var(--border-radius);
+    }
+    
+    .comment-section h3 {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+    }
+    
+    .comment-section h3 span {
+      font-size: 1rem;
+      background: var(--accent);
+      color: #333;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-left: 15px;
+      font-weight: 500;
+    }
+    
+    .comment-editor {
+      padding: 25px;
+      margin-bottom: 30px;
+      border-radius: var(--border-radius);
+      background: white;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .comment-editor textarea {
+      width: 100%;
+      height: 120px;
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      resize: none;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .comment-editor textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+    }
+    
+    .editor-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    
+    .editor-tools button {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      margin-right: 15px;
+      color: #999;
+      transition: var(--transition);
+    }
+    
+    .editor-tools button:hover {
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+    
+    .editor-actions .submit {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 35px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    
+    .editor-actions .submit:hover {
+      background: var(--dark);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(44, 90, 160, 0.3);
+    }
+    
+    .comment-list {
+      max-height: 600px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    
+    .comment-item {
+      display: flex;
+      gap: 20px;
+      padding: 25px;
+      border-radius: var(--border-radius);
+      background: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      transition: var(--transition);
+    }
+    
+    .comment-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .comment-item .avatar {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--light);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+    
+    .comment-body {
+      flex: 1;
+    }
+    
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .comment-header strong {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    
+    .comment-header .badge {
+      background: var(--accent);
+      color: #333;
+      padding: 3px 12px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .comment-header .badge.teacher {
+      background: linear-gradient(to right, var(--primary), #3a6fc4);
+      color: white;
+    }
+    
+    .comment-header span {
+      font-size: 0.9rem;
+      color: #999;
+      margin-left: auto;
+    }
+    
+    .like-btn {
+      background: rgba(245, 195, 44, 0.15);
+      color: #333;
+      border: none;
+      padding: 5px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+    
+    .like-btn:hover {
+      background: rgba(245, 195, 44, 0.25);
+    }
+    
+    .like-btn::before {
+      content: "♥";
+      margin-right: 5px;
+      color: #e74c3c;
+    }
+    
+    .comment-body p {
+      font-size: 1.05rem;
+      color: #555;
+      line-height: 1.7;
+    }
+    
+    .comment-reply {
+      margin-top: 20px;
+      padding-left: 20px;
+      border-left: 3px solid rgba(44, 90, 160, 0.1);
+    }
+    
+    /* 底部导航优化 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.08);
+      padding: 15px 10px;
+      display: flex;
+      justify-content: space-around;
+      z-index: 999;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 15px;
+      border-radius: 50px;
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      width: 80px;
+    }
+    
+    .nav-item.active {
+      background: rgba(240, 245, 255, 0.8);
+      transform: translateY(-15px);
+    }
+    
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      top: -10px;
+      width: 50px;
+      height: 5px;
+      background: var(--primary);
+      border-radius: 5px;
+    }
+    
+    .nav-item img {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 8px;
+      transition: var(--transition);
+      object-fit: contain;
+    }
+    
+    .nav-item.active img {
+      transform: scale(1.15);
+    }
+    
+    .nav-item span {
+      font-size: 0.85rem;
+      color: #777;
+      transition: var(--transition);
+    }
+    
+    .nav-item.active span {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    /* 响应式优化 */
+    @media (max-width: 1024px) {
+      .button-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+      }
+      
+      .global-search {
+        width: 200px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .button-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .content-section {
+        padding: 20px;
+      }
+      
+      #home h1 {
+        font-size: 2.2rem;
+      }
+      
+      .nav-button {
+        min-height: 180px;
+        padding: 25px 15px;
+      }
+      
+      #map-container {
+        height: 400px;
+      }
+      
+      .global-search {
+        display: none;
+      }
+      
+      .map-controls .search-box {
+        min-width: 100%;
+      }
+      
+      .map-layers {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .bg-control {
+        bottom: 120px;
+        right: 10px;
+        flex-direction: row;
+      }
+      
+      .bg-preview {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .bottom-nav .nav-item span {
+        font-size: 0.75rem;
+      }
+      
+      .nav-item {
+        padding: 8px;
+        width: 70px;
+      }
+      
+      .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .content-header button {
+        align-self: flex-end;
+        padding: 10px 20px;
+      }
+      
+      .editable-area {
+        padding: 20px;
+      }
+      
+      .comment-item {
+        padding: 15px;
+        gap: 12px;
+      }
+      
+      .comment-item .avatar {
+        width: 45px;
+        height: 45px;
+      }
+      
+      .bg-control {
+        bottom: 90px;
+        right: 5px;
+      }
+    }
+    
+    /* 修复图标显示问题 */
+    .nav-item img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* 修复底部导航激活指示条 */
+    .nav-item.active::after {
+      top: -8px;
+      width: 45px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <header class="global-header glass-card">
+    <button id="sidebarToggle">☰</button>
+    <a href="#home" class="logo">十堰一中指南</a>
+    <div class="breadcrumb">
+      <a href="#home">首页</a> <span>›</span> <span id="current-chapter">总体介绍</span>
+    </div>
+    
+    <!-- 全局搜索 -->
+    <div class="global-search">
+      <input type="text" placeholder="搜索指南内容..." id="globalSearch">
+      <button>🔍</button>
+      <div class="suggestions-box glass-card">
+        <div class="suggestion-item" data-type="chapter">
+          <span>第一章：校园生活指南</span>
+          <small>宿舍管理 · 食堂攻略</small>
+        </div>
+        <div class="suggestion-item" data-type="location">
+          <span>图书馆位置</span>
+          <small>校园地图模块</small>
+        </div>
+        <div class="suggestion-item" data-type="comment">
+          <span>食堂美食讨论</span>
+          <small>评论区热点话题</small>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- 背景图片控制 -->
+  <div class="bg-control">
+    <div class="bg-preview" style="background-image: url('assets/bg-1.jpg');" onclick="changeBackground('assets/bg-1.jpg')"></div>
+    <div class="bg-preview" style="background-image: url('assets/bg-2.jpg');" onclick="changeBackground('assets/bg-2.jpg')"></div>
+    <div class="bg-preview" style="background-image: url('assets/bg-3.jpg');" onclick="changeBackground('assets/bg-3.jpg')"></div>
+  </div>
+  
+  <!-- 侧边目录 -->
+  <div id="sidebar" class="glass-card">
+    <div class="sidebar-header">
+      <h3>目录导航</h3>
+      <button id="closeSidebar">✕</button>
+    </div>
+    <div class="chapter-tree">
+      <details open>
+        <summary>校园生活指南</summary>
+        <a href="#" data-chapter="1">校园概况</a>
+        <a href="#" data-chapter="1">宿舍管理</a>
+        <a href="#" data-chapter="1">食堂攻略</a>
+        <a href="#" data-chapter="1">校园安全</a>
+        <a href="#" data-chapter="1">交通指南</a>
+      </details>
+      <details>
+        <summary>学习资源导航</summary>
+        <a href="#" data-chapter="2">图书馆指南</a>
+        <a href="#" data-chapter="2">实验室使用</a>
+        <a href="#" data-chapter="2">自习室分布</a>
+        <a href="#" data-chapter="2">在线学习平台</a>
+      </details>
+      <details>
+        <summary>校园文化</summary>
+        <a href="#" data-chapter="3">社团活动</a>
+        <a href="#" data-chapter="3">传统节日</a>
+        <a href="#" data-chapter="3">校史长廊</a>
+        <a href="#" data-chapter="3">校园艺术</a>
+      </details>
+      <details>
+        <summary>新生必读</summary>
+        <a href="#" data-chapter="4">入学流程</a>
+        <a href="#" data-chapter="4">选课指南</a>
+        <a href="#" data-chapter="4">奖学金申请</a>
+      </details>
+    </div>
+  </div>
+  
+  <!-- 首页内容 -->
+  <div id="home" class="content-section active">
+    <h1>十堰一中校园生活指南</h1>
+    <p>探索校园精彩，开启智慧旅程——枫糖悠悠倾情呈现</p>
+    <div class="button-grid">
+      <button class="nav-button glass-card" onclick="showSection('overview')">
+        <img src="assets/icons/intro-icon.png" alt="总体介绍">
+        <span>校园全景</span>
+        <div class="subtitle">了解学校历史与特色</div>
+      </button>
+      <button class="nav-button glass-card" onclick="showSection('toc')">
+        <img src="assets/icons/toc-icon.png" alt="目录">
+        <span>指南目录</span>
+        <div class="subtitle">浏览完整内容结构</div>
+      </button>
+      <button class="nav-button glass-card" onclick="showSection('map')">
+        <img src="assets/icons/map-icon.png" alt="地图">
+        <span>校园导航</span>
+        <div class="subtitle">探索校园每个角落</div>
+      </button>
+      <button class="nav-button glass-card" onclick="loadChapter(1)">
+        <img src="assets/icons/start-icon.png" alt="开始">
+        <span>新生必读</span>
+        <div class="subtitle">开启你的校园生活</div>
+      </button>
+      <button class="nav-button glass-card" onclick="showSection('events')">
+        <img src="assets/icons/events-icon.png" alt="活动">
+        <span>近期活动</span>
+        <div class="subtitle">参与校园精彩事件</div>
+      </button>
+      <button class="nav-button glass-card" onclick="showSection('credits')">
+        <img src="assets/icons/thanks-icon.png" alt="鸣谢">
+        <span>制作团队</span>
+        <div class="subtitle">了解幕后创作者</div>
+      </button>
+    </div>
+  </div>
+  
+  <!-- 总体介绍 -->
+  <div id="overview" class="content-section">
+    <div class="content-header">
+      <h2>校园全景概览</h2>
+      <button onclick="showSection('home')">返回首页</button>
+    </div>
+    <div class="editable-area glass-card">
+      <h3>十堰市第一中学</h3>
+      <p>创建于1973年，湖北省首批重点中学和省级示范高中。占地253亩，建筑面积99851平方米，75个教学班，4600余名学生。</p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0;">
+        <div>
+          <h4>办学理念</h4>
+          <p>秉承"育人为本，德育为先，师生共进，全面发展"的办学理念，打造"低进高出、高进优出、优进特出、多元发展"人才培养品牌。</p>
+        </div>
+        <div>
+          <h4>校训</h4>
+          <p style="font-size: 1.4rem; font-weight: 800; color: var(--primary);">文明勤奋 · 求实进取</p>
+        </div>
+      </div>
+      
+      <h3>校园设施</h3>
+      <ul>
+        <li><strong>四栋现代化教学楼</strong>：配备智慧黑板、空调和多媒体设备</li>
+        <li><strong>六栋学生公寓</strong>：配备空调、暖气及独立卫生间</li>
+        <li><strong>省级达标图书馆</strong>：藏书16万册，全省地市州唯一中学"达标图书馆"</li>
+        <li><strong>国家级标准体育场馆</strong>：标准田径场、室内篮球馆、恒温游泳池</li>
+        <li><strong>科技创新实验中心</strong>：3D打印、机器人编程、生物基因等专业实验室</li>
+      </ul>
+      
+      <h3 style="margin-top: 40px;">校园风光</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+        <div style="height: 180px; background: #e6f0ff; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #999;">校园全景图</div>
+        <div style="height: 180px; background: #e6f0ff; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #999;">图书馆内景</div>
+        <div style="height: 180px; background: #e6f0ff; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #999;">体育场航拍</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 目录页 -->
+  <div id="toc" class="content-section">
+    <div class="content-header">
+      <h2>指南目录</h2>
+      <button onclick="showSection('home')">返回首页</button>
+    </div>
+    <div id="chapter-buttons" class="button-grid"></div>
+  </div>
+  
+  <!-- 校园地图 -->
+  <div id="map" class="content-section">
+    <div class="content-header">
+      <h2>校园全景导航</h2>
+      <button onclick="showSection('home')">返回首页</button>
+    </div>
+    <div class="map-controls">
+      <div class="search-box">
+        <input type="text" id="mapSearch" placeholder="搜索教学楼、食堂、实验室...">
+        <button>🔍</button>
+      </div>
+      <div class="map-layers">
+        <button data-layer="default">平面地图</button>
+        <button data-layer="satellite">卫星视图</button>
+        <button data-layer="ar" onclick="activateAR()">AR实景导航</button>
+      </div>
+    </div>
+    <div id="map-container"></div>
+    <div class="location-card glass-card">
+      <h3 id="location-name">校园导览中心</h3>
+      <p>提供校园地图、建筑导览和咨询服务，开放时间：8:00-22:00</p>
+      <button onclick="planRoute()">规划路线</button>
+    </div>
+  </div>
+  
+  <!-- 近期活动 -->
+  <div id="events" class="content-section">
+    <div class="content-header">
+      <h2>校园近期活动</h2>
+      <button onclick="showSection('home')">返回首页</button>
+    </div>
+    <div class="editable-area glass-card">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        <div class="glass-card" style="padding: 25px; border-radius: 20px;">
+          <h3 style="color: var(--primary); margin-bottom: 15px;">学科游园会</h3>
+          <p><strong>时间：</strong>7月15日 14:00-17:00</p>
+          <p><strong>地点：</strong>中心广场</p>
+          <p>各学科设置趣味展台，通过游戏和实验展示学科魅力</p>
+        </div>
+        
+        <div class="glass-card" style="padding: 25px; border-radius: 20px;">
+          <h3 style="color: var(--primary); margin-bottom: 15px;">校园艺术节</h3>
+          <p><strong>时间：</strong>7月20日-25日</p>
+          <p><strong>地点：</strong>艺术中心</p>
+          <p>学生艺术作品展览、音乐会和戏剧表演</p>
+        </div>
+        
+        <div class="glass-card" style="padding: 25px; border-radius: 20px;">
+          <h3 style="color: var(--primary); margin-bottom: 15px;">科学创新大赛</h3>
+          <p><strong>时间：</strong>8月5日 9:00-16:00</p>
+          <p><strong>地点：</strong>科技楼展厅</p>
+          <p>学生科技创新项目展示与评选</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 章节内容 -->
+  <div id="chapter-container" class="content-section">
+    <div class="content-header">
+      <h2 id="chapter-title">第一章：校园生活指南</h2>
+      <button onclick="showSection('toc')">返回目录</button>
+    </div>
+    <div id="chapter-content" class="editable-area glass-card">
+      <!-- 内容通过JavaScript动态加载 -->
+    </div>
+    
+    <!-- 评论区 -->
+    <div class="comment-section glass-card">
+      <h3>校友交流区 <span>286条讨论</span></h3>
+      <div class="comment-editor">
+        <textarea placeholder="分享你的校园经验..."></textarea>
+        <div class="editor-actions">
+          <div class="editor-tools">
+            <button title="表情">😊</button>
+            <button title="图片">🖼️</button>
+            <button title="附件">📎</button>
+          </div>
+          <button class="submit">发布评论</button>
+        </div>
+      </div>
+      <div class="comment-list">
+        <div class="comment-item">
+          <img src="assets/avatars/user1.jpg" class="avatar">
+          <div class="comment-body">
+            <div class="comment-header">
+              <strong>李校友</strong>
+              <span>2小时前</span>
+              <button class="like-btn">42</button>
+            </div>
+            <p>食堂二楼的牛肉面绝对是隐藏美食！毕业三年仍念念不忘，每次回校必吃。记得加他们特制的辣椒油，味道更棒！</p>
+          </div>
+        </div>
+        <div class="comment-item">
+          <img src="assets/avatars/teacher1.jpg" class="avatar">
+          <div class="comment-body">
+            <div class="comment-header">
+              <strong>张老师</strong>
+              <span class="badge teacher">教师认证</span>
+              <span>1小时前</span>
+              <button class="like-btn">28</button>
+            </div>
+            <p>确实，每天限量50碗要早去排队，建议11:30前到食堂。另外推荐教师窗口的红烧肉，周三特供！</p>
+            <div class="comment-reply">
+              <div class="comment-item" style="margin-bottom: 0; padding: 15px; background: #f9f9ff;">
+                <img src="assets/avatars/user2.jpg" class="avatar">
+                <div class="comment-body">
+                  <div class="comment-header">
+                    <strong>王同学</strong>
+                    <span>30分钟前</span>
+                    <button class="like-btn">5</button>
+                  </div>
+                  <p>感谢张老师推荐！今天去尝了，红烧肉肥而不腻，太赞了！</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comment-item">
+          <img src="assets/avatars/user3.jpg" class="avatar">
+          <div class="comment-body">
+            <div class="comment-header">
+              <strong>陈学长</strong>
+              <span class="badge">毕业生</span>
+              <span>5小时前</span>
+              <button class="like-btn">67</button>
+            </div>
+            <p>新生注意！图书馆四楼靠窗的位置是学习圣地，视野好又安静，但需要早去占座。夏天记得带件外套，空调很足。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 制作鸣谢 -->
+  <div id="credits" class="content-section">
+    <div class="content-header">
+      <h2>制作团队与鸣谢</h2>
+      <button onclick="showSection('home')">返回首页</button>
+    </div>
+    <div class="editable-area glass-card">
+      <h3>制作团队</h3>
+      <p>本指南由十堰一中学生社团"枫糖悠悠"独立设计开发，团队成员：</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin: 30px 0;">
+        <div>
+          <div style="height: 120px; background: #e6f0ff; border-radius: 16px; margin-bottom: 15px;"></div>
+          <strong>张同学</strong>
+          <p>UI设计 & 前端开发</p>
+        </div>
+        <div>
+          <div style="height: 120px; background: #e6f0ff; border-radius: 16px; margin-bottom: 15px;"></div>
+          <strong>李同学</strong>
+          <p>内容编辑 & 校园调研</p>
+        </div>
+        <div>
+          <div style="height: 120px; background: #e6f0ff; border-radius: 16px; margin-bottom: 15px;"></div>
+          <strong>王同学</strong>
+          <p>地图绘制 & 功能开发</p>
+        </div>
+      </div>
+      
+      <h3>特别鸣谢</h3>
+      <ul>
+        <li>十堰一中校方提供的信息支持与资源</li>
+        <li>石彬老师（英语特级教师）提供的校史资料</li>
+        <li>孙福胜老师（地理高级教师）的校园地理指导</li>
+        <li>校园导览中心提供的场地数据</li>
+      </ul>
+      
+      <h3 style="margin-top: 40px;">数据来源</h3>
+      <p>十堰一中官方网站：<a href="http://www.syyz.net" target="_blank" style="color: var(--primary);">www.syyz.net</a></p>
+    </div>
+  </div>
+  
+  <!-- 底部导航 -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="showSection('home')">
+      <img src="assets/icons/home-icon.png" alt="首页">
+      <span>首页</span>
+    </div>
+    <div class="nav-item" onclick="showSection('toc')">
+      <img src="assets/icons/book-icon.png" alt="目录">
+      <span>目录</span>
+    </div>
+    <div class="nav-item" onclick="showSection('map')">
+      <img src="assets/icons/map-icon.png" alt="地图">
+      <span>地图</span>
+    </div>
+    <div class="nav-item" onclick="showSection('events')">
+      <img src="assets/icons/events-icon.png" alt="活动">
+      <span>活动</span>
+    </div>
+    <div class="nav-item" onclick="showSection('credits')">
+      <img src="assets/icons/thanks-icon.png" alt="鸣谢">
+      <span>鸣谢</span>
+    </div>
+  </div>
+
+  <script>
+    // 章节数据（可扩展）
+    const chapters = [
+      {
+        id: 1,
+        title: "校园生活指南",
+        sections: [
+          {
+            title: "校园概况",
+            content: `<h3>校园布局</h3>
+            <p>十堰一中位于十堰市中心城区，分为五堰北街17号（人民路校门）和北京北路78号（北京路校门）两个校区。学校拥有四栋教学楼、六栋学生公寓、科技信息楼和室内体育馆。</p>
+            
+            <h3>核心区域</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0;">
+              <div>
+                <h4>教学区</h4>
+                <p>1-4号教学楼呈E字形分布，由连廊连接。每间教室配备智慧黑板、空调和多媒体设备。</p>
+              </div>
+              <div>
+                <h4>生活区</h4>
+                <p>六栋学生公寓环绕中心花园，每间宿舍6人，配备独立卫生间、空调和暖气。</p>
+              </div>
+            </div>
+            
+            <h3>特色设施</h3>
+            <ul>
+              <li><strong>智慧图书馆</strong>：藏书16万册，电子阅览区配备100台电脑</li>
+              <li><strong>创新实验室</strong>：3D打印、机器人编程、生物基因等专业实验室</li>
+              <li><strong>艺术中心</strong>：800座音乐厅及12间专业琴房</li>
+              <li><strong>体育场馆</strong>：标准田径场、室内篮球馆、恒温游泳池</li>
+            </ul>`
+          },
+          {
+            title: "宿舍管理",
+            content: `<h3>住宿规定</h3>
+            <p>学校实行封闭式管理，宿舍每晚22:30熄灯。学生需遵守以下规定：</p>
+            <ol>
+              <li>保持宿舍整洁，每日轮值打扫</li>
+              <li>禁止使用大功率电器（>800W）</li>
+              <li>外来人员需在宿管处登记</li>
+              <li>晚间22:00后禁止外出</li>
+            </ol>
+            
+            <h3>设施服务</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 25px 0;">
+              <div style="text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">🛏️</div>
+                <p>每层配备洗衣房（投币式）</p>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">💧</div>
+                <p>24小时热水供应</p>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">🔌</div>
+                <p>限电管理（23:00-6:00断电）</p>
+              </div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "学习资源导航",
+        sections: [
+          {
+            title: "图书馆指南",
+            content: `<h3>开放时间</h3>
+            <p><strong>平日：</strong>8:00-22:00<br><strong>周末/节假日：</strong>9:00-17:00</p>
+            
+            <h3>借阅规则</h3>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+              <thead>
+                <tr style="background: #f5f7ff;">
+                  <th style="padding: 12px; text-align: left;">读者类型</th>
+                  <th style="padding: 12px; text-align: left;">借阅册数</th>
+                  <th style="padding: 12px; text-align: left;">借阅期限</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 12px; border-bottom: 1px solid #eee;">学生</td>
+                  <td style="padding: 12px; border-bottom: 1px solid #eee;">5册</td>
+                  <td style="padding: 12px; border-bottom: 1px solid #eee;">30天（可续借1次）</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border-bottom: 1px solid #eee;">教师</td>
+                  <td style="padding: 12px; border-bottom: 1px solid #eee;">10册</td>
+                  <td style="padding: 12px; border-bottom: 1px solid #eee;">60天（可续借2次）</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <h3>空间分布</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 25px 0;">
+              <div>
+                <h4>一楼</h4>
+                <p>服务台、新书展示区、期刊阅览区</p>
+              </div>
+              <div>
+                <h4>二楼</h4>
+                <p>社会科学图书区、自习区</p>
+              </div>
+              <div>
+                <h4>三楼</h4>
+                <p>自然科学图书区、电子阅览区</p>
+              </div>
+            </div>`
+          }
+        ]
+      }
+    ];
+    
+    // DOM元素
+    const contentSections = document.querySelectorAll('.content-section');
+    const sidebar = document.getElementById('sidebar');
+    const chapterButtons = document.getElementById('chapter-buttons');
+    const chapterTitle = document.getElementById('chapter-title');
+    const chapterContent = document.getElementById('chapter-content');
+    const currentChapter = document.getElementById('current-chapter');
+    const globalSearch = document.getElementById('globalSearch');
+    const suggestionsBox = document.querySelector('.suggestions-box');
+    
+    // 初始化目录按钮
+    function initTocButtons() {
+      chapters.forEach(chapter => {
+        const button = document.createElement('button');
+        button.className = 'nav-button glass-card';
+        button.innerHTML = `
+          <img src="assets/icons/chapter-${chapter.id}.png" alt="${chapter.title}">
+          <span>${chapter.title}</span>
+          <div class="subtitle">${chapter.sections.length}个章节</div>
+        `;
+        button.onclick = () => loadChapter(chapter.id);
+        chapterButtons.appendChild(button);
+      });
+    }
+    
+    // 显示指定区域
+    function showSection(sectionId) {
+      // 更新面包屑导航
+      const sectionNames = {
+        'home': '首页',
+        'overview': '校园全景',
+        'toc': '指南目录',
+        'map': '校园导航',
+        'chapter-container': '章节内容',
+        'events': '近期活动',
+        'credits': '制作团队'
+      };
+      currentChapter.textContent = sectionNames[sectionId];
+      
+      // 更新活动状态
+      contentSections.forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+      sidebar.classList.remove('active');
+      suggestionsBox.style.display = 'none';
+      
+      // 更新底部导航状态
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // 根据当前页面激活对应底部导航项
+      const navItems = document.querySelectorAll('.nav-item');
+      if(sectionId === 'home') navItems[0].classList.add('active');
+      else if(sectionId === 'toc') navItems[1].class极.add('active');
+      else if(sectionId === 'map') navItems[2].classList.add('active');
+      else if(sectionId === 'events') navItems[3].classList.add('active');
+      else if(sectionId === 'credits') navItems[4].classList.add('active');
+    }
+    
+    // 加载章节内容
+    function loadChapter(chapterId) {
+      const chapter = chapters.find(c => c.id === chapterId);
+      if (!chapter) return;
+      
+      chapterTitle.textContent = chapter.title;
+      chapterContent.innerHTML = chapter.sections[0].content;
+      showSection('chapter-container');
+      
+      // 保存阅读进度
+      localStorage.setItem('lastChapter', chapterId);
+    }
+    
+    // 更换背景图片
+    function changeBackground(imageUrl) {
+      document.body.style.setProperty('--bg-image', `url('${imageUrl}')`);
+    }
+    
+    // 搜索功能
+    globalSearch.addEventListener('input', function() {
+      if (this.value.length > 1) {
+        suggestionsBox.style.display = 'block';
+      } else {
+        suggestionsBox.style.display = 'none';
+      }
+    });
+    
+    // 校园地图功能
+    function activateAR() {
+      if (navigator.geolocation) {
+        alert('AR导航已激活！请移动设备查看实景路线');
+      } else {
+        alert('您的设备不支持AR导航功能');
+      }
+    }
+    
+    // 侧边栏交互
+    document.getElementById('sidebarToggle').onclick = () => {
+      sidebar.classList.add('active');
+    };
+    
+    document.getElementById('closeSidebar').onclick = () => {
+      sidebar.classList.remove('active');
+    };
+    
+    // 目录树交互
+    document.querySelectorAll('.chapter-tree a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const chapterId = link.getAttribute('data-chapter');
+        loadChapter(parseInt(chapterId));
+      });
+    });
+    
+    // 页面加载时初始化
+    window.onload = () => {
+      initTocButtons();
+      
+      // 恢复上次阅读进度
+      const lastChapter = localStorage.getItem('lastChapter');
+      if (lastChapter) {
+        loadChapter(parseInt(lastChapter));
+      }
+      
+      // 侧边栏点击外部关闭
+      document.addEventListener('click', (e) => {
+        if (!sidebar.contains(e.target) && e.target.id !== 'sidebarToggle') {
+          sidebar.classList.remove('active');
+        }
+      });
+      
+      // 搜索建议点击
+      document.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const type = item.getAttribute('data-type');
+          if (type === 'chapter') {
+            showSection('toc');
+          } else if (type === 'location') {
+            showSection('map');
+          } else if (type === 'comment') {
+            loadChapter(1);
+          }
+          suggestionsBox.style.display = 'none';
+        });
+      });
+      
+      // 点赞功能
+      document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          let count = parseInt(this.textContent);
+          this.textContent = count + 1;
+          this.style.animation = 'likeAnimation 0.5s';
+          setTimeout(() => {
+            this.style.animation = '';
+          }, 500);
+        });
+      });
+    };
+  </script>
+</body>
+</html>
